@@ -59,6 +59,7 @@ src/main/resources/*
 src/main/resources/application-dev.yaml
 
 ##리드미#
+/_etc/*
 readme.txt
 chatlog/
 _bak/
