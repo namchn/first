@@ -66,6 +66,30 @@ public class StockData {
 		return template_sub;
 	}
 	
+	
+	private String buildSignalMessage(String today, String symbol,
+            double close, double sma200) {
+		
+		if (close > sma200) {
+			return String.format(
+			"%s: %s 종가(%.2f)가 200일선(%.2f) 위에 있습니다. [상승 시그널]",
+			today, symbol, close, sma200
+			);
+		}
+		
+		if (close < sma200) {
+			return String.format(
+			"%s: %s 종가(%.2f)가 200일선(%.2f) 아래에 있습니다. [하락 시그널]",
+			today, symbol, close, sma200
+			);
+		}
+		
+		return String.format(
+			"%s: %s 종가(%.2f)가 200일선(%.2f)과 동일합니다.",
+			today, symbol, close, sma200
+		);
+	}
+	
 
 	// 도메인 핵심 로직: n일 이동평균 계산 (프레임워크 의존성 제로)
 	/*
