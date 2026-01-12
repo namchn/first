@@ -2,6 +2,65 @@
 
 헥사고날 아키텍처 을 적용하여 리펙토링 중..
 
+# 프로젝트 디렉토리 구조 
+```
+project/
+└── main/
+    ├── java/
+    │   └── com/nc/fisrt/
+    │       ├── FisrtApplication.java
+    │		│
+    │       ├── common/
+    │       │   ├── dto/
+    │       │   │   ├── ResponseDTO.java
+    │       │   │   └── ResponseStringDTO.java
+    │       │   ├── error/
+    │       │   ├── request/
+    │       │   ├── service/
+    │       │   │   └── EmailService.java
+    │       │   └── util/
+    │		│
+    │       ├── domain/
+    │       │   ├── stock/
+    │       │   │   ├── adapter/
+    │       │   │   │   ├── entity/
+    │       │   │   │   ├── out/
+	│	    │   │   │   │   ├── external/
+	│		│   │   │   │   │   └── AlphaVantageAdapter
+	│	    │   │   │   │   └── persistence/
+	│		│   │   │   │       └── KiwoomLogAdapter
+	│       │   │   │   ├── scheduler/
+	│	    │   │   │   │   └── ApiSchedulerServiceImpl
+    │       │   │   │   └── web/
+	│	    │   │   │       ├── api/
+	│		│   │   │       │   └── EmailController
+	│	    │   │   │       └── view/
+    │       │   │   │
+    │       │   │   ├── core/
+    │       │   │   │   ├── domain/
+    │       │   │   │   │   ├── StockData
+    │       │   │   │   │   └── StockReport
+    │       │   │   │   │
+    │       │   │   │   ├── policy/
+    │       │   │   │   └── port/
+    │       │   │   │       ├── in/
+    │       │   │   │       │   └── GetStockReportUseCase
+    │       │   │   │       └── out/
+    │       │   │   │           ├── StockExchangePort
+    │       │   │   │           └── LogPersistencePort
+    │       │   │   │
+    │       │   │   └── infrastructure/
+    │       │   │
+    │       │   └── user/
+    │       │
+    │       └── 
+    │
+    └── resources/
+        ├── application-dev.yaml
+        └── application.properties
+```
+
+
 
 #깃 기본 명령어 모음
 ```
