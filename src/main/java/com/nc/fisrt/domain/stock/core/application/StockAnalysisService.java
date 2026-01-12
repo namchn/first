@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 public class StockAnalysisService implements GetStockReportUseCase {
 	private final StockExchangePort stockExchangePort;
 	private final LogPersistencePort logPersistencePort;
-	private final StockData stockData;
+	//private final StockData stockData; //상태없는 도메인 모델이므로
 	
 	
 
@@ -41,6 +41,7 @@ public class StockAnalysisService implements GetStockReportUseCase {
 				.map(rawData -> {
 					
 					//어댑터에서 받은 Raw 데이터를 도메인 모델로 변환 (도메인 내부에서 계산)
+					StockData stockData = new StockData(symbol, rawData);
 					String response = stockData.processAnalysis(symbol, rawData);
 					log.info("response:"+response);
 					return response;

@@ -8,16 +8,18 @@ import java.util.Map;
 //domain/StockData.java
 public class StockData {
 	private final String symbol;
-	private final Map<LocalDate, Double> dailyCloses; // 파싱된 순수 데이터
+	private final Map<String, Object> rawData; // 파싱된 순수 데이터
 
-	public StockData(String symbol, Map<LocalDate, Double> dailyCloses) {
+	
+	public StockData(String symbol, Map<String, Object> rawData) {
 		this.symbol = symbol;
-		this.dailyCloses = dailyCloses;
+		this.rawData = rawData;
 	}
 
 	// 도메인 핵심 로직: n일 이동평균 계산 (프레임워크 의존성 제로)
+	/*
 	public double calculateSMA(int days) {
-	     return dailyCloses.values().stream()
+	     return rawData.values().stream()
 	             .limit(days)
 	             .mapToDouble(Double::doubleValue)
 	             .average()
@@ -29,6 +31,7 @@ public class StockData {
 		// ... 리포트 문자열 생성 로직
 		return String.format("%s 리포트: 220일선 %.2f", symbol, sma220);
 	}
+	*/
 	
 	// 실제 가공 처리 (예: 종가만 추출)
 	public String processAnalysis( String symbol, Map<String, Object> response) {
