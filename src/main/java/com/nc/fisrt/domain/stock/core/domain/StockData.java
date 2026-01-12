@@ -15,6 +15,18 @@ public class StockData {
 		this.symbol = symbol;
 		this.rawData = rawData;
 	}
+	
+	// 도메인 핵심 로직: n일 이동평균 계산
+	private double calculateSMA(List<String> dates,
+		            Map<String, Map<String, String>> timeSeries,
+		            int days) {
+		return dates.stream()
+		.limit(days)
+		.mapToDouble(d -> Double.parseDouble(timeSeries.get(d).get("4. close")))
+		.average()
+		.orElse(Double.NaN); // 데이터가 없으면 NaN 반환
+	}
+	
 
 	// 도메인 핵심 로직: n일 이동평균 계산 (프레임워크 의존성 제로)
 	/*
@@ -75,11 +87,15 @@ public class StockData {
         }
         double sma200 = sum / Math.min(200, dates.size());
         */
+        /*
         double sma200 = dates.stream()
                 .limit(200)
                 .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
                 .average()
                 .orElse(Double.NaN);  // 데이터가 없으면 NaN 반환
+        */
+        
+        double sma200 = calculateSMA(dates,timeSeries,200);
         
         
         // 최근 2일 종가 합산
@@ -90,36 +106,14 @@ public class StockData {
         }
         double sma2 = sum2 / Math.min(2, dates.size());
         */
-        double sma2 = dates.stream()
-                .limit(2)
-                .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
-                .average()
-                .orElse(Double.NaN);
         
-        double sma220 = dates.stream()
-                .limit(220)
-                .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
-                .average()
-                .orElse(Double.NaN);
+        double sma2 = calculateSMA(dates,timeSeries,2);
+        double sma220 = calculateSMA(dates,timeSeries,220);
+        double sma3 = calculateSMA(dates,timeSeries,3);
+        double sma5 = calculateSMA(dates,timeSeries,5);
+        double sma10 = calculateSMA(dates,timeSeries,10);
         
-        double sma3 = dates.stream()
-                .limit(3)
-                .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
-                .average()
-                .orElse(Double.NaN);
         
-        double sma5 = dates.stream()
-                .limit(5)
-                .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
-                .average()
-                .orElse(Double.NaN);
-        
-        double sma10 = dates.stream()
-                .limit(10)
-                .mapToDouble(date -> Double.parseDouble(timeSeries.get(date).get("4. close")))
-                .average()
-                .orElse(Double.NaN);
-
         //log.info("today:"+today);
         //log.info("close:"+close);
         //log.info("sma200:"+sma200);	
