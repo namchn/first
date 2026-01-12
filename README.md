@@ -2,6 +2,25 @@
 
 헥사고날 아키텍처 을 적용하여 리펙토링 중..
 
+
+
+
+# 헥사고날 아키텍처 흐름
+```
+[ Web / Scheduler ]
+        |
+[ Application / UseCase ]
+        |
+[ Domain ]
+        |
+[ Port (Interface) ]
+        |
+[ Adapter / Infrastructure ]
+```
+
+
+
+
 # 프로젝트 디렉토리 구조 
 ```
 project/
