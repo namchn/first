@@ -55,8 +55,9 @@ out/
 #src/main/resources/application-test.yaml
 
 ##src/main/resources/config.yaml
-src/main/resources/*
+#src/main/resources/*
 src/main/resources/application-dev.yaml
+
 
 ##리드미#
 /_etc/*
