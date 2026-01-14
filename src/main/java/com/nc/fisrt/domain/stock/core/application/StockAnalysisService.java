@@ -1,7 +1,11 @@
 package com.nc.fisrt.domain.stock.core.application;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
+import com.nc.fisrt.domain.stock.core.domain.EmailMessage;
+import com.nc.fisrt.domain.stock.core.domain.SendStatus;
 import com.nc.fisrt.domain.stock.core.domain.StockData;
 import com.nc.fisrt.domain.stock.core.port.in.GetStockReportUseCase;
 import com.nc.fisrt.domain.stock.core.port.out.EmailMessageRepositoryPort;
@@ -20,7 +24,7 @@ public class StockAnalysisService implements GetStockReportUseCase {
 	private final StockExchangePort stockExchangePort;
 	private final LogPersistencePort logPersistencePort;
 	//private final StockData stockData; //상태없는 도메인 모델이므로
-	private final EmailMessageRepositoryPort emailRepo;
+	private final EmailMessageRepositoryPort emailRepoPort;
 
 	@Override
 	public Mono<String> getStockReport(boolean testYn ,String symbol, String apiKey) {
@@ -44,13 +48,25 @@ public class StockAnalysisService implements GetStockReportUseCase {
 					StockData stockData = new StockData(symbol, rawData);
 					String response = stockData.processAnalysis(symbol, rawData);
 					//log.info("response:"+response);
+					
+					/*
+					return new EmailMessage(
+							0L,
+							"",
+		                    "",
+		                    response,
+		                    SendStatus.PENDING);
+					*/
+					
+					
 					return response;
 					
                     //StockData stockData = StockDataParser.parse(symbol, rawData);
                     //return stockData.generateReport();
 					
 					}) 
-				// 계산 로직																			
+				// 계산 로직
+				
 				// 분리
 				//데이터 응답후 처리
 				.doOnTerminate(() -> {
@@ -63,13 +79,37 @@ public class StockAnalysisService implements GetStockReportUseCase {
 					logPersistencePort.recordApiLog(symbol, duration);
 					
 					
-					
-					
 				})
 				.onErrorResume(e -> 
 					Mono.just("예외 발생: " + e.getMessage())
 					//Mono.just("주식 데이터 조회 중 오류가 발생했습니다.")
 				); // 예외(네트워크 오류, 타임아웃 등)만 처리
 	}
+	
+	@Override
+    public Mono<EmailMessage> getStockReport2(boolean testYn, String symbol, String apiKey) {
+
+        if (testYn) {
+            EmailMessage test = EmailMessage.test(symbol);
+            emailRepoPort.save(test);
+            return Mono.just(test);
+        }
+
+        return stockExchangePort.fetchDailyStockData(symbol, apiKey)
+            .map(rawData -> createEmail(symbol, rawData))
+            .doOnNext(emailRepoPort::save);
+    }
+	
+	private EmailMessage createEmail(String symbol, Map<String, Object> rawData) {
+        StockData stockData = new StockData(symbol, rawData);
+        String report = stockData.processAnalysis(symbol, rawData);
+
+        return EmailMessage.create(
+            "likencw@naver.com",
+            "[주식 알림] " + symbol,
+            report
+        );
+    }
+	
 
 }

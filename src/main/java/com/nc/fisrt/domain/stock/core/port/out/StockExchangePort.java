@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 //application/port/out/StockExchangePort.java (외부 API 호출용)
 public interface StockExchangePort {
 	Mono<Map<String, Object>> fetchDailyStockData(String symbol, String apiKey);
+	Mono<Map<String, Object>> fetchDailyStockDataTest(String symbol, String apiKey);
 }

@@ -38,4 +38,16 @@ public class AlphaVantageAdapter implements StockExchangePort {
 				// .bodyToMono(Map.class); // API 응답(JSON)을 Map으로 받음
 				//.map(map -> (Map<String, Object>) map); // 강제 캐스팅
 	}
+
+	@Override
+	public Mono<Map<String, Object>> fetchDailyStockDataTest(String symbol, String apiKey) {
+		Map<String, Object> mock = Map.of(
+	            "Time Series (Daily)", Map.of(
+	                "2024-01-01", Map.of("4. close", "123.45")
+	            ),
+	            "Meta Data", Map.of("2. Symbol", symbol)
+		);
+
+		return Mono.just(mock);
+	}
 }

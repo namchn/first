@@ -1,8 +1,11 @@
 package com.nc.fisrt.domain.stock.adapter.out.external;
 
+import org.springframework.stereotype.Component;
+
 import com.nc.fisrt.domain.stock.core.domain.StockReport;
 import com.nc.fisrt.domain.stock.core.port.out.StockApiPort;
 
+@Component
 public class StockApiClientAdapter implements StockApiPort {
 
 	@Override

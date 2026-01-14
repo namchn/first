@@ -8,4 +8,5 @@ public interface EmailMessageRepositoryPort {
     void save(EmailMessage message);
     List<EmailMessage> findPending();
     void markAsSent(Long id);
+	List<EmailMessage> findPending(boolean testYn);
 }
