@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.nc.fisrt.domain.stock.core.domain.StockData;
 import com.nc.fisrt.domain.stock.core.port.in.GetStockReportUseCase;
+import com.nc.fisrt.domain.stock.core.port.out.EmailMessageRepositoryPort;
 import com.nc.fisrt.domain.stock.core.port.out.LogPersistencePort;
 import com.nc.fisrt.domain.stock.core.port.out.StockExchangePort;
 
@@ -12,15 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 //application/service/StockAnalysisService.java
-@Slf4j
+//@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StockAnalysisService implements GetStockReportUseCase {
 	private final StockExchangePort stockExchangePort;
 	private final LogPersistencePort logPersistencePort;
 	//private final StockData stockData; //상태없는 도메인 모델이므로
-	
-	
+	private final EmailMessageRepositoryPort emailRepo;
 
 	@Override
 	public Mono<String> getStockReport(boolean testYn ,String symbol, String apiKey) {
@@ -43,7 +43,7 @@ public class StockAnalysisService implements GetStockReportUseCase {
 					//어댑터에서 받은 Raw 데이터를 도메인 모델로 변환 (도메인 내부에서 계산)
 					StockData stockData = new StockData(symbol, rawData);
 					String response = stockData.processAnalysis(symbol, rawData);
-					log.info("response:"+response);
+					//log.info("response:"+response);
 					return response;
 					
                     //StockData stockData = StockDataParser.parse(symbol, rawData);
@@ -62,8 +62,14 @@ public class StockAnalysisService implements GetStockReportUseCase {
                     double duration = (System.currentTimeMillis() - startTime) / 1000.0;
 					logPersistencePort.recordApiLog(symbol, duration);
 					
-				}).onErrorResume(e -> Mono.just("예외 발생: " + e.getMessage())); // 예외(네트워크 오류, 타임아웃 등)만 처리
+					
+					
+					
+				})
+				.onErrorResume(e -> 
+					Mono.just("예외 발생: " + e.getMessage())
+					//Mono.just("주식 데이터 조회 중 오류가 발생했습니다.")
+				); // 예외(네트워크 오류, 타임아웃 등)만 처리
 	}
 
-	
 }

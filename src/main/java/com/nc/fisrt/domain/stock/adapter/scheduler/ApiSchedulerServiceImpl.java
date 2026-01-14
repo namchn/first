@@ -5,9 +5,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nc.fisrt.common.service.EmailService;
 import com.nc.fisrt.domain.stock.core.application.StockAnalysisService;
 import com.nc.fisrt.domain.stock.core.port.in.GetStockReportUseCase;
+import com.nc.fisrt.domain.stock.core.port.out.MailSenderPort;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.scheduler.Schedulers;
@@ -18,16 +18,18 @@ import reactor.core.scheduler.Schedulers;
 public class ApiSchedulerServiceImpl {
 
 
-	private  ObjectMapper mapper = new ObjectMapper();
+	//private  ObjectMapper mapper = new ObjectMapper();
     //private final KiwoomService kiwoomService;
     //private final KakaoAlarmService kakaoAlarmService;
     //private final KiwoomLogicContainerService kiwoomLogicContainerService;
-    private final EmailService emailService;
+    
+	//private final EmailService emailService;
+    //private final EmailService emailService;
     //private final YahoofinaceStockService yahoofinaceStockService;
     
-    private final StockAnalysisService stockAnalysisService;
+    //private final StockAnalysisService stockAnalysisService;
     private final GetStockReportUseCase getStockReportUseCase;
-    
+    private final MailSenderPort mailSenderPort;
     
     
     //private final KakaoTokenManager kakaoTokenManager;
@@ -54,12 +56,12 @@ public class ApiSchedulerServiceImpl {
 	
 
 	public ApiSchedulerServiceImpl(
-			EmailService emailService
+			MailSenderPort mailSenderPort
 			,StockAnalysisService stockAnalysisService
 			,GetStockReportUseCase getStockReportUseCase
 			) {
-		this.emailService = emailService;
-		this.stockAnalysisService = stockAnalysisService;
+		this.mailSenderPort = mailSenderPort;
+		//this.stockAnalysisService = stockAnalysisService;
 		this.getStockReportUseCase = getStockReportUseCase;
 	}
 	
@@ -70,10 +72,10 @@ public class ApiSchedulerServiceImpl {
 	//@Scheduled(cron = "0 24 18 * * MON-FRI", zone = "Asia/Seoul")  // 2의 배수 분 마다
 	
 	//@Scheduled(cron = "10 48 22 * * MON-FRI", zone = "Asia/Seoul")  // 2의 배수 분 마다
-	@Scheduled(cron = "11 36 00 * * *", zone = "Asia/Seoul")  // 일요일 오전 9시 12분 13초
+	@Scheduled(cron = "11 31 17 * * *", zone = "Asia/Seoul")  // 일요일 오전 9시 12분 13초
 	public void runSequentialYahoofinaceTqqq() {
 		
-		boolean testYn =true;
+		boolean testYn = true;
 		//boolean testYn =false;
 		//Map<String, Object> body = yahoofinaceStockService.getStockQuote("TQQQ","undefined");
     	//Map<String, Object> body = yahoofinaceStockService.getStockQuote2("TQQQ","undefined");
@@ -122,7 +124,7 @@ public class ApiSchedulerServiceImpl {
 								        {
 									        //if(response.length()>0) {//종가가 아래에 있을때만 확인
 									        	log.info("response:"+response);
-										        emailService.sendEmail(
+									        	mailSenderPort.sendEmail(
 										        		"likencw@naver.com",  //보낼주소
 								                        "[알림]test.nc2030 에서 보내는 부정기메일입니다.",         //제목
 								                        "이건 스프링 부트에서 보내는 테스트 메일입니다.\n"+response //내용
