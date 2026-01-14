@@ -1,6 +1,7 @@
 package com.nc.fisrt.domain.stock.adapter.out.persistence;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -66,6 +67,14 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 	@Override
 	public void save(EmailMessage message) {
 		jpaRepository.save(toEntity(message));
+	}
+	
+	@Override
+	public EmailMessage findById(long msgId) {
+			return jpaRepository.findById(msgId)
+		            .map(this::toDomain)
+		            .orElse(null);
+		
 	}
 
 	@Override
