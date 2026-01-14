@@ -25,7 +25,7 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 
 	private EmailMessage toDomain(EmailMessageJpaEntity e) {
 		return new EmailMessage(
-				//e.getId(),
+				e.getId(),
 				e.getToEmail(),
 				e.getSubject(),
 				e.getBody(),
@@ -78,7 +78,7 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 	
 	@Override
 	public List<EmailMessage> findPending(boolean testYn) {
-        return jpaRepository.findByStatus(SendStatus.TEST.name())
+        return jpaRepository.findByStatus(testYn?SendStatus.TEST.name():SendStatus.PENDING.name())
                 .stream()
                 .map(this::toDomain)
                 .toList();

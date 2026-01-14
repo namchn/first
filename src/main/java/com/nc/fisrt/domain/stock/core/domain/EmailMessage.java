@@ -20,7 +20,16 @@ public class EmailMessage {
 		this.createdAt = LocalDateTime.now();
 	}
 
-    public static EmailMessage create(String toEmail, String subject, String body) {
+    public EmailMessage(Long id, String toEmail, String subject, String body, SendStatus status) {
+		this.id = id;
+		this.toEmail = toEmail;
+		this.subject = subject;
+		this.body = body;
+		this.status = status;
+		this.createdAt = LocalDateTime.now();
+	}
+
+	public static EmailMessage create(String toEmail, String subject, String body) {
         return new EmailMessage(toEmail, subject, body, SendStatus.PENDING);
     }
     

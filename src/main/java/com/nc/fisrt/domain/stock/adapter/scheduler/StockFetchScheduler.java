@@ -14,7 +14,7 @@ public class StockFetchScheduler {
     private final GetStockReportUseCase getStockReportUseCase;
 
     //@Scheduled(cron = "0 0 17 * * MON-FRI")
-    @Scheduled(cron = "11 30 22 * * *", zone = "Asia/Seoul")  // 일요일 오전 9시 12분 13초
+    @Scheduled(cron = "11 11 23 * * *", zone = "Asia/Seoul")  // 일요일 오전 9시 12분 13초
     public void fetchAndStore() {
     	//boolean testYn = false;
     	boolean testYn = true;
