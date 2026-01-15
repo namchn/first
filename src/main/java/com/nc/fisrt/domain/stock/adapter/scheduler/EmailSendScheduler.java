@@ -30,8 +30,8 @@ public class EmailSendScheduler {
 	
 	@Scheduled(cron = "0/20 * * * * *")
 	public void sendEmails3() {
-		boolean testYn = true;
-		//boolean testYn =false;
+		//boolean testYn = true;
+		boolean testYn =false;
 		// 1. 발송 대상 조회 (영속성 컨텍스트를 위해 트랜잭션 없이 조회하거나 필요시 분리)
 		//List<EmailMessage> pendingMsgs = repo.findPending(testYn);
 		//log.info("sendEmails");

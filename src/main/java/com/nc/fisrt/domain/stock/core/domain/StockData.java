@@ -5,7 +5,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.nc.fisrt.domain.stock.adapter.scheduler.StockFetchScheduler;
+
+import lombok.extern.slf4j.Slf4j;
+
 //domain/StockData.java
+//@Slf4j
 public class StockData {
 	private final String symbol;
 	private final Map<String, Object> rawData; // 파싱된 순수 데이터
@@ -176,15 +181,16 @@ public class StockData {
         double sma5 = calculateSMA(dates,timeSeries,5);
         double sma10 = calculateSMA(dates,timeSeries,10);
         
-        
-        //log.info("today:"+today);
-        //log.info("close:"+close);
-        //log.info("sma200:"+sma200);	
-        //log.info("sma220:"+sma220);
-        //log.info("sma2:"+sma2);
-        //log.info("sma3:"+sma3);
-		// log.info("sma5:"+sma5);
-		// log.info("sma10:"+sma10);
+        /*
+        log.info("today:"+today);
+        log.info("close:"+close);
+        log.info("sma200:"+sma200);	
+        log.info("sma220:"+sma220);
+        log.info("sma2:"+sma2);
+        log.info("sma3:"+sma3);
+		log.info("sma5:"+sma5);
+		log.info("sma10:"+sma10);
+		*/
 
 		String result = "\n*중요한것은 잃지 않는것*.\n\n";
 
@@ -202,7 +208,7 @@ public class StockData {
 		
 		if (close > sma200) {
 			result = template_above;
-			result = "";// template_above; // 종가가 선 아래에 있을때만 확인
+			//result = "";// template_above; // 종가가 선 아래에 있을때만 확인
 			if (sma200 * 1.10 > close) { // 종가가 200일 선의 110% 이하 이면 알림있음.
 				result = template_above;
 			}
@@ -217,7 +223,7 @@ public class StockData {
 		} else if (close < sma200) {
 			result = template_below;
 			if (close < sma200 * 0.75) { // 종가가 200일 선의 75% 이하이면 알림 없음. //상당한 하락
-				result = "";
+				//result = "";
 			}
 			if (close < sma200 * 0.59 && close > sma200 * 0.4) { // 종가가 200일 선의 59% 이하이면 알림 있음. //극단적 하락
 				result = template_below

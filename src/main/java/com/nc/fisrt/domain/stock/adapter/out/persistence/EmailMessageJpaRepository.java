@@ -15,7 +15,7 @@ public interface EmailMessageJpaRepository extends JpaRepository<EmailMessageJpa
 
 	// 1. 발송 대기 건을 조회 즉시 'SENDING'으로 변경 (정합성 보장)
     @Modifying
-    @Query("UPDATE email_message e SET e.status = 'SENDING' WHERE  e.status :status")
+    @Query("UPDATE EmailMessageJpaEntity e SET e.status = 'SENDING' WHERE  e.status = :status")
     long updateStatusToSending(@Param("status") String status);
 
 
@@ -25,7 +25,7 @@ public interface EmailMessageJpaRepository extends JpaRepository<EmailMessageJpa
 	
     // 3. 발송 완료 후 특정 필드만 즉시 업데이트 (성능 최적화)
     @Modifying
-    @Query("UPDATE email_message e SET e.status = :status , e.sentAt = NOW() WHERE e.id = :id")
+    @Query("UPDATE EmailMessageJpaEntity e SET e.status = :status , e.sentAt = NOW() WHERE e.id = :id")
     long updateStatus(@Param("status") String status
     				   ,@Param("id") Long id);
 	
