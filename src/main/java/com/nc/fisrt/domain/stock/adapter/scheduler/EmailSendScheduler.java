@@ -41,8 +41,8 @@ public class EmailSendScheduler {
 	    repo.updateStatusToSending(testYn);
 		
 	    // 2. 내가 방금 점유한 'SENDING' 데이터들만 가져옴
-	    // 3. 비동기로 발송 던지기
 		repo.findSending().forEach(EmailMessage -> {
+		    // 3. 비동기로 발송 던지기
 			// 엔티티를 도메인으로 변환하여 전달
 	        sendPendingEmailsUseCase.sendAsync(EmailMessage.getId(), EmailMessage);
 	    });
