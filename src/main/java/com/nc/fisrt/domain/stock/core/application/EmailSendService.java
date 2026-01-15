@@ -34,6 +34,7 @@ public class EmailSendService implements SendPendingEmailsUseCase {
             
             // 성공 시 DB 업데이트 (특정 필드만 직접 수정하여 정합성 보장)
             repo.updateStatus(SendStatus.SENT.name(), msg.getId());
+            log.info("메일 발송 성공: {}", id); //필요시 성공 데이터에 대해 축적
             
         } catch (Exception e) {
             // 실패 시 다시 PENDING으로 돌리거나 에러 로그 기록
