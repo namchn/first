@@ -11,6 +11,9 @@ public interface EmailMessageRepositoryPort {
     void markAsSent(Long id);
     List<EmailMessage> findPending();
 	List<EmailMessage> findPending(boolean testYn);
+	List<EmailMessage> findSending();
+	List<EmailMessage> findSending(boolean testYn);
+	long updateStatusToSending(boolean testYn);
 	long updateStatusToSending(String status);
 	long updateStatus(String status, Long id);
 }

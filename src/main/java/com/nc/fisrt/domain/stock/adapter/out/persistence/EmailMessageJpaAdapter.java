@@ -94,6 +94,22 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
                 .map(this::toDomain)
                 .toList();
     }
+	
+	@Override
+	public List<EmailMessage> findSending() {
+        return jpaRepository.findByStatus(SendStatus.SENDING.name())
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
+	
+	@Override
+	public List<EmailMessage> findSending(boolean testYn) {
+        return jpaRepository.findByStatus(testYn?SendStatus.TEST.name():SendStatus.SENDING.name())
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
 
 	@Override
 	public void markAsSent(Long id) {
@@ -103,8 +119,15 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 	
 	@Override
 	@Transactional
+	public long updateStatusToSending(boolean testYn) {
+		String targetStatus = testYn ? SendStatus.TEST.name() : SendStatus.PENDING.name();
+		return jpaRepository.updateStatusToSending(targetStatus);
+	}
+	
+	@Override
+	@Transactional
 	public long updateStatusToSending(String status) {
-		return jpaRepository.updateStatusToSending(status);
+		return jpaRepository.updateStatusToSending(SendStatus.PENDING.name());
 	}
 	
 	@Override
@@ -112,5 +135,6 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 	public long updateStatus(String status,Long id) {
 		return jpaRepository.updateStatus(status, id);
 	}
+
 
 }
