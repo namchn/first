@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.nc.fisrt.domain.stock.adapter.entity.EmailMessageJpaEntity;
 import com.nc.fisrt.domain.stock.adapter.scheduler.EmailSendScheduler;
 import com.nc.fisrt.domain.stock.core.domain.EmailMessage;
+import com.nc.fisrt.domain.stock.core.domain.SendStatus;
 import com.nc.fisrt.domain.stock.core.port.in.SendPendingEmailsUseCase;
 import com.nc.fisrt.domain.stock.core.port.out.EmailMessageRepositoryPort;
 import com.nc.fisrt.domain.stock.core.port.out.MailSenderPort;
@@ -24,7 +25,24 @@ public class EmailSendService implements SendPendingEmailsUseCase {
     private final EmailMessageRepositoryPort repo;
     private final MailSenderPort mailSender;
 
-
+    @Override
+    @Async // 별도 스레드에서 병렬 처리 (성능)
+    public void sendAsync(Long id, EmailMessage msg) {
+        try {
+            // 실제 메일 발송
+            mailSender.send(msg);
+            
+            // 성공 시 DB 업데이트 (특정 필드만 직접 수정하여 정합성 보장)
+            repo.updateStatus(SendStatus.SENT.name(), msg.getId());
+            
+        } catch (Exception e) {
+            // 실패 시 다시 PENDING으로 돌리거나 에러 로그 기록
+        	repo.updateStatus(SendStatus.FAILED.name(), msg.getId());
+            log.error("메일 발송 실패 ID: {}", id, e);
+        }
+    }
+    
+    
 
     @Override
    	@Async // 2. 비동기 처리: 별도 스레드에서 실행

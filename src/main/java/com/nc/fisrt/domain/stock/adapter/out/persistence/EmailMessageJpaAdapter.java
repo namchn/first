@@ -10,6 +10,8 @@ import com.nc.fisrt.domain.stock.core.domain.EmailMessage;
 import com.nc.fisrt.domain.stock.core.domain.SendStatus;
 import com.nc.fisrt.domain.stock.core.port.out.EmailMessageRepositoryPort;
 
+import jakarta.transaction.Transactional;
+
 /*
 Persistence Adapter (Outbound)
 */
@@ -97,6 +99,18 @@ public class EmailMessageJpaAdapter implements EmailMessageRepositoryPort {
 	public void markAsSent(Long id) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	@Transactional
+	public long updateStatusToSending(String status) {
+		return jpaRepository.updateStatusToSending(status);
+	}
+	
+	@Override
+	@Transactional
+	public long updateStatus(String status,Long id) {
+		return jpaRepository.updateStatus(status, id);
 	}
 
 }
