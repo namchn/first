@@ -22,7 +22,8 @@ public class StockFetchScheduler {
     	log.info("fetchAndStore");
     	boolean testYn = false;
     	//boolean testYn = true;
-    	String type = "mock"; //alpha
+    	//String type = "mock"; 
+    	String type = "alpha"; 
     	getStockReportUseCase.getStockReport2(type,testYn, "TQQQ", "API_KEY")
                .subscribe();
     }
