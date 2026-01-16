@@ -11,7 +11,8 @@ import com.nc.fisrt.domain.stock.core.port.out.StockExchangePort;
 import reactor.core.publisher.Mono;
 
 //adapter/out/external/AlphaVantageAdapter.java
-@Component
+//@Component
+@Component("alpha")
 public class AlphaVantageAdapter implements StockExchangePort {
 	private final WebClient webClient;
 
@@ -24,6 +25,12 @@ public class AlphaVantageAdapter implements StockExchangePort {
 				.build();
 	}
 
+
+	@Override
+	public String getType() {
+		return "alpha";
+	}
+	
 	@Override
 	public Mono<Map<String, Object>> fetchDailyStockData(String symbol, String apiKey) {
 		return webClient.get()
@@ -50,4 +57,5 @@ public class AlphaVantageAdapter implements StockExchangePort {
 
 		return Mono.just(mock);
 	}
+
 }

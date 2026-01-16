@@ -21,14 +21,24 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class StockAnalysisService implements GetStockReportUseCase {
-	private final StockExchangePort stockExchangePort;
+	
+	
+	// 스프링이 빈 이름(alpha, mock)을 key로 하여 자동으로 Map을 만들어 주입함
+    private final Map<String, StockExchangePort> StockExchangePortMap;
+	
+	//private final StockExchangePort stockExchangePort;
 	private final LogPersistencePort logPersistencePort;
 	//private final StockData stockData; //상태없는 도메인 모델이므로
 	private final EmailMessageRepositoryPort emailRepoPort;
 
 	@Override
-	public Mono<String> getStockReport(boolean testYn ,String symbol, String apiKey) {
+	public Mono<String> getStockReport(String type,boolean testYn ,String symbol, String apiKey) {
 		// String symbol="TQQQ";
+		
+		StockExchangePort stockExchangePort = StockExchangePortMap.get(type.toLowerCase()); // 호출자가 넘긴 타입으로 찾기
+		if (stockExchangePort == null) {
+            throw new IllegalArgumentException("stockExchangePort 지원하지 않는 구현체입니다.");
+        }
 		
 		 boolean mockMode = testYn;
 		 if (mockMode) {
@@ -87,8 +97,14 @@ public class StockAnalysisService implements GetStockReportUseCase {
 	}
 	
 	@Override
-    public Mono<EmailMessage> getStockReport2(boolean testYn, String symbol, String apiKey) {
+    public Mono<EmailMessage> getStockReport2(String type,boolean testYn, String symbol, String apiKey) {
 
+
+		StockExchangePort stockExchangePort = StockExchangePortMap.get(type.toLowerCase()); // 호출자가 넘긴 타입으로 찾기
+		if (stockExchangePort == null) {
+            throw new IllegalArgumentException("stockExchangePort 지원하지 않는 구현체입니다.");
+        }
+		
         if (testYn) {
             EmailMessage test = EmailMessage.test(symbol);
             emailRepoPort.save(test);

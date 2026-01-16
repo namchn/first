@@ -9,15 +9,23 @@ import com.nc.fisrt.domain.stock.core.port.out.StockExchangePort;
 
 import reactor.core.publisher.Mono;
 
-@Component
-@Profile("test")
+//@Component
+@Component("mock")
+//@Profile("test")
 public class MockStockExchangeAdapter implements StockExchangePort {
 
+	
+
+	@Override
+	public String getType() {
+		return "mock";
+	}
+	
     @Override
     public Mono<Map<String, Object>> fetchDailyStockData(String symbol, String apiKey) {
         Map<String, Object> mock = Map.of(
             "Time Series (Daily)", Map.of(
-                "2024-01-01", Map.of("4. close", "123.45")
+                "2024-01-01", Map.of("4. close", "111.22")
             ),
             "Meta Data", Map.of("2. Symbol", symbol)
         );

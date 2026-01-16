@@ -114,7 +114,7 @@ public class ApiSchedulerServiceImpl {
     	//호출은 비동기 -> 메일은 동기
     	//yahoofinaceStockService.getStockReport(testYn,"TQQQ","undefined")
     	//stockAnalysisService.getStockReport(testYn,"TQQQ","undefined")
-    	getStockReportUseCase.getStockReport(testYn,"TQQQ","undefined")
+    	getStockReportUseCase.getStockReport("alpha",testYn,"TQQQ","undefined")
     	
     	//yahoofinaceStockService.getStockReport(testYn,"FNGG","undefined")
     							//.block()
