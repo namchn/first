@@ -5,6 +5,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import com.nc.fisrt.domain.batch.adapter.out.persistence.TimeAdapter;
 import com.nc.fisrt.domain.batch.adapter.tasklet.LogPrintTasklet;
 import com.nc.fisrt.domain.batch.adapter.tasklet.TimeSaveTasklet;
+import com.nc.fisrt.domain.batch.core.port.in.CreateTestDataUseCase;
+
+import lombok.RequiredArgsConstructor;
 
 
 /*
@@ -29,6 +33,7 @@ import com.nc.fisrt.domain.batch.adapter.tasklet.TimeSaveTasklet;
  */
 
 //@EnableBatchProcessing
+@RequiredArgsConstructor
 @Configuration // Spring의 설정 클래스를 나타내는 어노테이션, Spring IoC 컨테이너에 Bean으로 등록됨
 public class LogJobConfig {
 
@@ -42,13 +47,18 @@ public class LogJobConfig {
      * @return 설정된 Job 객체
      */
 	
+	
+	private final CreateTestDataUseCase createTestDataUseCase; // Core 호출
+	
     @Bean
     public Job logJob(JobRepository jobRepository,
             @Qualifier("logStep") Step logStep,
-            @Qualifier("saveTimeStep") Step saveTimeStep) {	// JobBuilder를 사용해 Job을 생성
+            @Qualifier("saveTimeStep") Step saveTimeStep,
+            @Qualifier("testDataStep") Step testDataStep) {	// JobBuilder를 사용해 Job을 생성
     	return new JobBuilder("logJob", jobRepository) // "logJob"이라는 이름으로 Job 정의
                 .start(logStep) // logStep을 Job의 첫 번째 실행 단계로 설정
-                .next(saveTimeStep)  // 다음 스텝 실행 
+                //.next(saveTimeStep)  // 다음 스텝 실행 
+                .next(testDataStep)  // 다음 스텝 실행 
                 .build(); // Job을 빌드하여 반환
     }
 	
@@ -97,6 +107,18 @@ public class LogJobConfig {
     public Step saveTimeStep(JobRepository jobRepository, PlatformTransactionManager transactionManager, TimeAdapter timeAdapter) {
         return new StepBuilder("saveTimeStep", jobRepository)
                 .tasklet(new TimeSaveTasklet(timeAdapter), transactionManager)
+                .build();
+    }
+    
+    // 3. 배치 Step 설정 (Tasklet 방식)
+    @Bean
+    public Step testDataStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("testDataStep", jobRepository)
+                .tasklet((contribution, chunkContext) -> {
+                    // Core 유스케이스 호출 (10개 생성)
+                    createTestDataUseCase.createDefaultTests(10);
+                    return RepeatStatus.FINISHED;
+                }, transactionManager)
                 .build();
     }
 
