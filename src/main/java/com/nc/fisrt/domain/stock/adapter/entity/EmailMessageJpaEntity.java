@@ -2,10 +2,12 @@ package com.nc.fisrt.domain.stock.adapter.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Data;
@@ -29,7 +31,24 @@ public class EmailMessageJpaEntity {
     
     //@Enumerated(EnumType.STRING)
     //private SendStatus status; // PENDING, SENT, FAILED
-
-    private LocalDateTime createdAt;
+    
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    
+    //private LocalDateTime createdAt;
     private LocalDateTime sentAt;
+    
+    
+    
+    /*
+    // 객체 생성 시점에 바로 현재 시간 할당
+    //@000Column(nullable = false, updatable = false) // updatable = false가 핵심입니다.
+   
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+    
+    */
+    
 }

@@ -1,0 +1,54 @@
+package com.nc.fisrt.domain.batch.adapter.in;
+
+import org.springframework.boot.autoconfigure.batch.BatchProperties.Job;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import com.nc.fisrt.domain.batch.core.domain.Settlement;
+import com.nc.fisrt.domain.batch.core.port.in.SettlementUseCase;
+import com.nc.fisrt.domain.batch.core.port.out.SettlementPort;
+
+import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.MemberSubstitution.Substitution.Chain.Step;
+
+@Configuration
+@RequiredArgsConstructor
+public class SettlementJobConfig {
+    private final SettlementUseCase settlementUseCase; // Inbound Port
+    private final SettlementPort settlementPort;       // Outbound Port (직접 쓰거나 서비스 통함)
+
+    @Bean
+    public Job settlementJob(JobRepository jobRepository, Step settlementStep) {
+        return new JobBuilder("settlementJob", jobRepository)
+                .start(settlementStep)
+                .build();
+    }
+
+    @Bean
+    public Step settlementStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("settlementStep", jobRepository)
+                .<Order, Settlement>chunk(100, transactionManager)
+                .reader(orderReader())     // DB에서 주문 읽기
+                .processor(itemProcessor()) // 비즈니스 로직 호출
+                .writer(itemWriter())      // 결과 저장
+                .build();
+    }
+
+    @Bean
+    public ItemProcessor<Order, Settlement> itemProcessor() {
+        // 배치의 Processor가 유스케이스(도메인 로직)를 실행함
+        return order -> {
+            Settlement settlement = order.createSettlement();
+            settlementUseCase.processSettlement(settlement); 
+            return settlement;
+        };
+    }
+
+    @Bean
+    public ItemWriter<Settlement> itemWriter() {
+        // Outbound Port를 사용하여 영속성 어댑터 호출
+        return chunk -> chunk.forEach(settlementPort::save);
+    }
+}

@@ -51,6 +51,13 @@ dependencies {
  	//Swagger
 	//implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+	
+	// 2026.01.18 배치테스트를 위해 추가
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.batch:spring-batch-core'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
 			
 }
 

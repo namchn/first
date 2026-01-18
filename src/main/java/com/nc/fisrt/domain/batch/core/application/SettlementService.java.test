@@ -1,0 +1,25 @@
+package com.nc.fisrt.domain.batch.core.application;
+
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.stereotype.Service;
+
+import com.nc.fisrt.domain.batch.core.domain.Settlement;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class SettlementService implements CalculateSettlementUseCase {
+    //private final LoadOrderPort loadOrderPort; // Outbound Port
+    //private final SaveSettlementPort saveSettlementPort; // Outbound Port
+
+    @Override
+    public void calculate(Long orderId) {
+        // 배치가 이 메서드를 호출함. 로직은 여기 응집됨.
+        Order order = loadOrderPort.loadOrder(orderId);
+        Settlement settlement = order.createSettlement();
+        saveSettlementPort.save(settlement);
+    }
+}
