@@ -17,6 +17,22 @@ public class TimeAdapter implements TimeRepositoryPort{
 	public TimeAdapter(TimeRepository timeRepository) {
 		this.timeRepository = timeRepository;
 	}
+
+	/*
+	@Override
+    public void saveAll(List<TestData> dataList) {
+        // JPA 엔티티 변환 후 한꺼번에 저장
+        List<TestDataEntity> entities = dataList.stream()
+                .map(TestDataEntity::fromDomain)
+                .toList();
+        repository.saveAll(entities);
+    }
+    */
+	
+	@Override
+    public void saveAll2(List<TimeEntity> dataList) {
+		timeRepository.saveAll(dataList);
+    }
 	
 	@Override
 	public void saveAll(List<TimeEntity> logs) {

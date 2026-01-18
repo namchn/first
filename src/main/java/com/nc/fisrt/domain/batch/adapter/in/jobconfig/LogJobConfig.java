@@ -50,7 +50,8 @@ public class LogJobConfig {
 	
 	private final CreateTestDataUseCase createTestDataUseCase; // Core 호출
 	
-    @Bean
+    @Bean(name = "logJob")
+    //@Qualifier("logJob")
     public Job logJob(JobRepository jobRepository,
             @Qualifier("logStep") Step logStep,
             @Qualifier("saveTimeStep") Step saveTimeStep,

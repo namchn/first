@@ -6,9 +6,13 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Qualifier;
 //import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.nc.fisrt.domain.batch.core.port.in.CreateTestDataUseCase;
+import com.nc.fisrt.domain.batch.core.port.out.TimeRepositoryPort;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +27,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component // 스프링 컴포넌트로 등록
 //@EnableScheduling // 스케줄링 기능 활성화
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class JobScheduler {
 
     private final JobLauncher jobLauncher;
     private final Job logJob;
+    
+    public JobScheduler(
+		    		JobLauncher jobLauncher,
+		    		@Qualifier("logJob") Job logJob) {
+		this.jobLauncher= jobLauncher;
+		this.logJob= logJob;
+	}
+
     
     // 실행 유무 체크
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
@@ -35,7 +47,7 @@ public class JobScheduler {
     /**
      * 매 분 0초마다 logJob 실행
      */
-    @Scheduled(cron = "0 * * * * *")
+   // @Scheduled(cron = "0 * * * * *")
     public void runLogJob() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis()) // Job 중복 실행 방지를 위한 파라미터
@@ -46,7 +58,7 @@ public class JobScheduler {
     
     
     //@Scheduled(fixedRate = 600000) // 10분마다 실행
-    @Scheduled(cron = "0 * * * * *")
+   // @Scheduled(cron = "0 * * * * *")
     public void runJob() {  //throws Exception 
     	
     	if (!isRunning.compareAndSet(false, true)) {

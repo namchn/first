@@ -3,17 +3,16 @@ package com.nc.fisrt.domain.batch.core.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 
 import com.nc.fisrt.domain.batch.adapter.entity.TimeEntity;
 import com.nc.fisrt.domain.batch.adapter.out.persistence.TimeAdapter;
-import com.nc.fisrt.domain.batch.adapter.tasklet.TimeSaveTasklet;
 import com.nc.fisrt.domain.batch.core.port.in.CreateTestDataUseCase;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 //@Slf4j
@@ -26,6 +25,31 @@ public class TestDataService implements CreateTestDataUseCase {
         this.timeAdapter = timeAdapter;
     }
 
+    
+
+	@Override
+	public List<TimeEntity>  createChunkData(int count) {
+		
+		
+		// 5000개 생성
+        List<TimeEntity> allLogs = new ArrayList<>();
+        int dataSize = count; //20
+        for (int i = 0; i < dataSize; i++) {
+            allLogs.add(new TimeEntity(LocalDateTime.now().plusNanos(i * 1000)));
+        }
+        return allLogs;
+		
+        /*
+		return IntStream.range(0, count)
+                .mapToObj(i -> TimeEntity.builder()
+                        .content("Bulk Data " + UUID.randomUUID())
+                        .createdAt(LocalDateTime.now())
+                        .build())
+                .toList();
+         
+         */
+	}
+    
     @Override
     @Transactional
     public void createDefaultTests(int count) {
@@ -88,4 +112,5 @@ public class TestDataService implements CreateTestDataUseCase {
             }
         }
     }
+
 }
