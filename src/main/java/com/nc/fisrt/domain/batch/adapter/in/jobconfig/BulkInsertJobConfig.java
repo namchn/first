@@ -61,7 +61,7 @@ public class BulkInsertJobConfig {
                     @Override
                     public void afterJob(JobExecution jobExecution) {
                         stopWatch.stop();
-                        log.info("▶▶▶ 총 소요 시간: {}초", stopWatch.getTotalTimeSeconds());
+                        log.info("▶▶▶ 총 소요 시간: {}초 - 사용자가 설정한 afterJob 리스너 실행 및 로그 출력 시간(약 45ms) 포함", stopWatch.getTotalTimeSeconds());
                     }
                 })
                 //
@@ -75,7 +75,7 @@ public class BulkInsertJobConfig {
                 .<List<TimeEntity>, List<TimeEntity>>chunk(100, transactionManager) // 100개 단위 트랜잭션
                 .reader(new ItemReader<>() {
                     private int count = 0;
-                    private final int max = 1000; // 총 10만 개를 넣고 싶다면 여기서 조절
+                    private final int max = 10000; // 총 10만 개를 넣고 싶다면 여기서 조절
 
                     @Override
                     public List<TimeEntity> read() {
@@ -87,7 +87,7 @@ public class BulkInsertJobConfig {
                 .writer(chunk -> {
                     // Outbound Port를 통해 대량 저장
                     chunk.getItems().forEach(timeRepositoryPort::saveAll2);
-                    log.info("Batch Inserted {} rows...", chunk.getItems().size() * 100);
+                    //log.info("Batch Inserted {} rows...", chunk.getItems().size() * 100);
                 })
                 .build();
     }
