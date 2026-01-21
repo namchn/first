@@ -91,4 +91,41 @@ public class BulkInsertJobConfig {
                 })
                 .build();
     }
+    
+    
+    /*
+    @Bean
+    public Step migrationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("migrationStep", jobRepository)
+                // 100개 단위로 읽고 가공하여 한 번에 씀 (Chunk 지향 처리)
+                .<List<SourceEntity>, List<TimeEntity>>chunk(100, transactionManager)
+                .reader(new ItemReader<>() {
+                    private int page = 0;
+                    private final int maxPages = 1000; // 100개씩 1000번 = 10만 개
+
+                    @Override
+                    public List<SourceEntity> read() {
+                        if (page >= maxPages) return null;
+                        // 소스 DB에서 페이징하여 읽어옴
+                        return fetchSourceDataUseCase.fetchChunk(page++, 100);
+                    }
+                })
+                .processor(sourceList -> {
+                    // [가공 로직] SourceEntity -> TimeEntity 변환 및 가공
+                    return sourceList.stream()
+                            .map(source -> {
+                                TimeEntity target = new TimeEntity();
+                                // 예: target.setValue(source.getOldValue() + " (Processed)");
+                                return target;
+                            })
+                            .collect(Collectors.toList());
+                })
+                .writer(chunk -> {
+                    // 가공된 데이터를 타겟 DB에 Bulk Insert
+                    chunk.getItems().forEach(timeRepositoryPort::saveAll2);
+                })
+                .build();
+    }
+    */
+    
 }

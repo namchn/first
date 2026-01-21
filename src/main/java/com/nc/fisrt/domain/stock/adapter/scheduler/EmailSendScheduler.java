@@ -28,7 +28,7 @@ public class EmailSendScheduler {
 	private final MailSenderPort mailSender;
 
 	
-	@Scheduled(cron = "0/20 * * * * *")
+	@Scheduled(cron = "0/30 * * * * *")
 	public void sendEmails3() {
 		//boolean testYn = true;
 		boolean testYn =false;
