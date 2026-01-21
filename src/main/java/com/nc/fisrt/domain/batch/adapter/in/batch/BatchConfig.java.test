@@ -1,0 +1,26 @@
+package com.nc.fisrt.domain.batch.adapter.in.batch;
+
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+
+public class BatchConfig {
+
+    @Bean
+    public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+        TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        
+        // 핵심: TaskExecutor를 설정하여 비동기 실행 모드로 변경
+        // SimpleAsyncTaskExecutor는 호출마다 새로운 스레드를 생성하거나, 
+        // 기존에 만든 ThreadPoolTaskExecutor 빈을 주입해서 사용할 수도 있습니다.
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor()); 
+        
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
+    
+
+}

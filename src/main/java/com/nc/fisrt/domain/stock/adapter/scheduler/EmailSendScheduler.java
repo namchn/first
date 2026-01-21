@@ -29,7 +29,8 @@ public class EmailSendScheduler {
 
 	
 	@Scheduled(cron = "0/30 * * * * *")
-	@Async("immediateExecutor")
+	//@Scheduled(cron = "0 0/6 * * * *")
+	//@Async("immediateExecutor")
 	public void sendEmails3() {
 		//boolean testYn = true;
 		boolean testYn =false;
@@ -37,6 +38,7 @@ public class EmailSendScheduler {
 		//List<EmailMessage> pendingMsgs = repo.findPending(testYn);
 		//log.info("sendEmails");
 		//pendingMsgs.forEach(sendPendingEmailsUseCase::processEachEmail);
+		
 		
 		// 1. 먼저 상태를 'SENDING'으로 바꿔서 다른 스케줄러가 못 가져가게 차단 (정합성 핵심)
 	    repo.updateStatusToSending(testYn);
@@ -47,7 +49,9 @@ public class EmailSendScheduler {
 			// 엔티티를 도메인으로 변환하여 전달
 	        sendPendingEmailsUseCase.sendAsync(EmailMessage.getId(), EmailMessage);
 	    });
+		/* */
 		
+		//log.info("메일 발송 성공: {}", "sendEmails3"); //필요시 성공 데이터에 대해 축적
 	}
 	
 	//@Scheduled(cron = "0/20 * * * * *")

@@ -1,9 +1,11 @@
 package com.nc.fisrt.common.util;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -13,11 +15,18 @@ public class AsyncConfig {
 
     // 1 & 2번 프로그램을 위한 일반 실행기 (우선순위 높음)
     @Bean(name = "immediateExecutor")
+    @Primary
     public Executor immediateExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(3);
         executor.setThreadNamePrefix("immediate-");
         executor.setThreadPriority(Thread.MAX_PRIORITY); // 우선순위 높임
+        
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(500); // 메모리 보호를 위해 적절한 제한을 둠
+        // 핵심 설정: 대기실이 꽉 차면 작업을 버리지 않고, 호출한 스레드에서 직접 실행함
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        
         executor.initialize();
         return executor;
     }
