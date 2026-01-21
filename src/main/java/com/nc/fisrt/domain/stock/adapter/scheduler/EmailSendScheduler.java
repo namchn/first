@@ -29,6 +29,7 @@ public class EmailSendScheduler {
 
 	
 	@Scheduled(cron = "0/30 * * * * *")
+	@Async("immediateExecutor")
 	public void sendEmails3() {
 		//boolean testYn = true;
 		boolean testYn =false;
