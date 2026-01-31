@@ -1,4 +1,4 @@
-package com.nc.fisrt.common.util;
+package com.nc.fisrt.common.thread;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -24,7 +24,7 @@ public class AsyncConfig {
         
         executor.setMaxPoolSize(20);
         executor.setQueueCapacity(500); // 메모리 보호를 위해 적절한 제한을 둠
-        // 핵심 설정: 대기실이 꽉 차면 작업을 버리지 않고, 호출한 스레드에서 직접 실행함
+        // 핵심 설정: 대기실이 꽉 차면 작업을 버리지 않고, 호출한 스레드에서 직접 실행함 //용도: 실시간 알림, 인증 메일 등 즉시성이 필요한 작업에 적합합니다.
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         
         executor.initialize();
@@ -36,8 +36,21 @@ public class AsyncConfig {
     public Executor lowPrioExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
+
+        // 2. 큐 용량 확대 (메모리가 허용하는 한 넉넉히)
+        executor.setQueueCapacity(1000); 
+        
         executor.setThreadNamePrefix("low-prio-batch-");
         executor.setThreadPriority(Thread.MIN_PRIORITY); // 우선순위 낮춤 (1)
+        
+        // 3. 핵심: 큐가 가득 차면 스케줄러 스레드가 직접 실행하여 유실 방지
+        // 결과적으로 시스템 전체의 속도는 느려지지만, 메일 발송 작업이 버려지는 일은 절대 없습니다.
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        
+        // 4. 종료 시 남은 작업 처리 대기
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        
         executor.initialize();
         return executor;
     }

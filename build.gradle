@@ -59,6 +59,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.batch:spring-batch-test'
 			
+	// 2026.01.28 시스템 정보 요청		
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'		
 }
 
 tasks.named('test') {
